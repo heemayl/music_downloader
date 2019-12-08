@@ -2,6 +2,8 @@
 
 #### Requires Python 3.8+
 
+---
+
 ### How to run the `music_downloader.py` to download albums:
 
 1. Make sure you have Python 3.8+:
@@ -19,13 +21,13 @@
 
 ### Examples:
 
-- Download the album **Shongbigno Pakhikul O Kalkata Bishoiyuk** of **Moheener Ghoraguli** (the name of the artist and album must match what's found on the URL; for example, this album is available on the URL [https://www.music.com.bd/download/browse/M/Moheener Ghoraguli/Shongbigno Pakhikul O Kalkata Bishoiyuk/][2]):
+- Download the album **Shongbigno Pakhikul O Kalkata Bishoiyuk** by **Moheener Ghoraguli** (the name of the artist and album must match what's found on the URL; for example, this album is available on the URL [https://www.music.com.bd/download/browse/M/Moheener Ghoraguli/Shongbigno Pakhikul O Kalkata Bishoiyuk/][2]):
 
 		python music_downloader.py --artist 'Moheener Ghoraguli' --album 'Shongbigno Pakhikul O Kalkata Bishoiyuk'
 
 	Once the download is done, you'll be shown the directory where it's saved (by default in the current working directory i.e. from where the script is invoked).
 
-- Download the album **Hok Kolorob** of **Arnob** in directory `foobar` :
+- Download the album **Hok Kolorob** by **Arnob** in directory `foobar` :
 
 		python music_downloader.py --artist 'Arnob' --album 'Hok Kolorob' --destination 'foobar'
 
@@ -34,6 +36,7 @@
 
 		python music_downloader.py --artist 'Warfaze' --album 'Obaak Bhalobasha' --destination /where/to/save/
 
+---
 
 ### Development:
 
