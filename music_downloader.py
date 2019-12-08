@@ -10,10 +10,10 @@ import sys
 import warnings
 
 from concurrent.futures import ThreadPoolExecutor
-from functools import partial
+from functools import partial, reduce
 from itertools import chain
-from typing import Tuple, List, Union, Optional, Iterator
-from urllib.parse import quote
+from typing import Tuple, List, Union, Optional, Iterator, Iterable
+from urllib.parse import quote, urljoin
 
 import requests
 
@@ -107,18 +107,49 @@ def get_parsed_args(
     return artist, parsed_args.album.strip(), destination
 
 
+def _get_joined_url(base: str, *parts: Iterable, append_slash: bool = False) -> str:
+    """Takes a base url and returns a complete URL join-ing
+    the parts after the base.
+    """
+    if not base.endswith('/'):
+        base = base + '/'
+    slashed_parts = (
+        part + '/' if not part.endswith('/') else part
+        for part in parts[:-1]
+    )
+
+    parts = chain(slashed_parts, parts[-1:])
+
+    joined_url = reduce(urljoin, parts, base)
+    return (
+        (joined_url + '/' if not joined_url.endswith('/') else joined_url)
+        if append_slash
+        else joined_url.rstrip('/')
+    )
+
+
 def get_album_url(artist: str, album: str) -> str:
 
     namespace = artist[0].upper()
-    return f'{BASE_URL}/{namespace}/{quote(artist)}/{quote(album)}/'
+    return _get_joined_url(
+        BASE_URL,
+        namespace,
+        quote(artist),
+        quote(album),
+        append_slash=True,
+    )
 
 
 def get_song_download_url(artist: str, album: str, song_url_path: str) -> str:
 
     namespace = artist[0].upper()
-    return (
-        f'{DOWNLOAD_URL}/{namespace}/{quote(artist)}/'
-        f'{quote(album)}/{quote(song_url_path)}'
+    return _get_joined_url(
+        DOWNLOAD_URL,
+        namespace,
+        quote(artist),
+        quote(album),
+        quote(song_url_path),
+        append_slash=False,
     )
 
 

@@ -170,7 +170,7 @@ class TestMusicAlbumDownloader:
     def test_get_song_download_url(self):
         artist_lower = self.artist.lower()
         song_url_path = '07. Foo Bar.mp3'
-        assert get_song_download_url(self.artist, self.album,  song_url_path) == (
+        assert get_song_download_url(self.artist, self.album, song_url_path) == (
             f'{DOWNLOAD_URL}/{artist_lower[0].upper()}/{quote(self.artist)}/'
             f'{quote(self.album)}/{quote(song_url_path)}'
         )
