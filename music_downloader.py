@@ -153,6 +153,13 @@ def get_song_download_url(artist: str, album: str, song_url_path: str) -> str:
     )
 
 
+def is_song_url(url: str) -> bool:
+    """Takes a URL and returns whether that is a song URL or not."""
+
+    # Song URLs do not contain trailing slash
+    return not url.endswith('/')
+
+
 async def get_response(
         url: str,
         executor: ThreadPoolExecutor,
@@ -163,12 +170,19 @@ async def get_response(
     and the content.
     """
 
+    return_when_error = (False, b'' if get_bytes else '')
+
     event_loop = asyncio.get_event_loop()
 
     try:
         response = await event_loop.run_in_executor(executor, requests.get, url)
+    except requests.exceptions.ConnectionError:
+        print(f'Network error while connecting to URL "{url}"', file=sys.stderr)
+        if not is_song_url(url):
+            sys.exit(2)
+        return return_when_error
     except Exception:
-        return False, b'' if get_bytes else ''
+        return return_when_error
 
     success = response.status_code == 200
     return (

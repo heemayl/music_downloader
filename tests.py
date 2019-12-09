@@ -7,6 +7,7 @@ from unittest.mock import patch
 from urllib.parse import quote
 
 import pytest
+import requests
 
 from bs4 import BeautifulSoup
 
@@ -23,6 +24,7 @@ from music_downloader import (
     get_response,
     get_soup,
     download_save_song,
+    is_song_url,
 )
 
 
@@ -297,11 +299,20 @@ class TestMusicAlbumDownloader:
     async def test_get_soup(self, patched_requests_get):
         assert isinstance(
             await get_soup(
-                album_url='https://music.com.bd',
+                album_url='https://music.com.bd/artist/A/album/',
                 executor=ThreadPoolExecutor(),
             ),
             BeautifulSoup
         )
+
+    @pytest.mark.asyncio
+    @patch('requests.get', side_effect=requests.exceptions.ConnectionError)
+    async def test_get_soup_system_exit(self, patched_requests_get):
+        with pytest.raises(SystemExit):
+            assert await get_soup(
+                album_url='https://music.com.bd/artist/A/album/',
+                executor=ThreadPoolExecutor(),
+            )
 
     def test_song_name_replace_regex(self):
         assert SONG_NAME_REPLACE_REGEX.sub(
@@ -336,3 +347,7 @@ class TestMusicAlbumDownloader:
             album_dir=self.destination,
         ) is None
         assert patched_open.call_count == 1
+
+    def test_is_song_url(self):
+        assert is_song_url('https://music.com.bd/foo/spam.mp3')
+        assert not is_song_url('https://music.com.bd/foo/')
